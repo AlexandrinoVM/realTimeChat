@@ -1,3 +1,3 @@
-from .chat_room import ChatRoom
-from .message import Message
-from .user import User
+from .chat_room import ChatRoomModel
+from .message import MessageModel
+from .user import UserModel

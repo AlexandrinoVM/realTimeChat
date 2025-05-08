@@ -1,10 +1,10 @@
 from backend.database import Base
 from sqlalchemy import ForeignKey,String,Column,Integer,Boolean
 
-class Message(Base):
+class MessageModel(Base):
     __tablename__ = "messages"
     id = Column("id",Integer,primary_key=True,autoincrement=True)
-    room = Column("room", ForeignKey("chatrooms.id"))
+    room = Column("room", ForeignKey("chatroom.id"))
     user = Column("usuario",ForeignKey("users.id"))
     content = Column("content",String)
 

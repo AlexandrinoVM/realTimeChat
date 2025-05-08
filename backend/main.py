@@ -8,7 +8,7 @@ from backend.database import Base,db
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
-from backend.router import router
+from backend.router import UserRouter
 import backend.models 
 
 Base.metadata.create_all(bind=db)
@@ -18,5 +18,5 @@ app = FastAPI()
 def read_root():
     return {"hellp": "world"}
 
-app.include_router(router)
+app.include_router(UserRouter)
     
