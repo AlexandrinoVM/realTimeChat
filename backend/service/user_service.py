@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import update
 from backend.models import UserModel
 from backend.schemas import User
 
@@ -8,7 +9,7 @@ def Register(user:User,db:Session):
     db.commit()
     db.close()
 
-def DeleteUser(id:int,db:Session):
+def Deleteuser(id:int,db:Session):
     user = db.query(UserModel).filter(UserModel.id == id).first()
     if user:
         db.delete(user)
@@ -16,3 +17,13 @@ def DeleteUser(id:int,db:Session):
         return True;
     else:
         return False
+
+def UpdateUser(id:int,user:User,db:Session):
+    user_update = user.dict()
+    stmt = (update(UserModel).
+                where(UserModel.id == id).
+                values(**user_update))
+    result = db.execute(stmt)
+    db.commit()
+
+    return result.rowcount >0

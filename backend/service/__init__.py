@@ -1,1 +1,1 @@
-from .user_service import Register
+from .user_service import Register,Deleteuser,UpdateUser
