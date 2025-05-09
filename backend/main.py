@@ -8,15 +8,16 @@ from backend.database import Base,db
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
-from backend.router import UserRouter
-import backend.models 
+from backend.router import UserRouter,RoomRouter
 
-Base.metadata.create_all(bind=db)
 
 app = FastAPI()
-@app.get("/")
-def read_root():
-    return {"hellp": "world"}
+@app.on_event("startup")
+async def startup_event():
+    Base.metadata.create_all(bind=db)
+
+
 
 app.include_router(UserRouter)
+app.include_router(RoomRouter)
     

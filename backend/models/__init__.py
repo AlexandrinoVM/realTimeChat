@@ -1,3 +1,3 @@
-from .chat_room import ChatRoomModel
-from .message import MessageModel
-from .user import UserModel
+from backend.models.chat_room import ChatRoomModel
+from backend.models.message import MessageModel
+from backend.models.user import UserModel

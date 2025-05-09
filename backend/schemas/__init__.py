@@ -1,3 +1,3 @@
-from .chat_goup import ChatGroup
+from .chat_room import ChatGroup
 from .messages import Message
 from .user import User

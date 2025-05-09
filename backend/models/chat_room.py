@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from backend.database import Base
 from models.schemas_model import ChatRoomUser
 
+
 class ChatRoomModel(Base):
     __tablename__ = "chatroom"
     __table_args__ = {'extend_existing': True}
@@ -10,7 +11,7 @@ class ChatRoomModel(Base):
     name = Column("name",String)
     
     users = relationship("UserModel",secondary=ChatRoomUser,back_populates="chatrooms")
-    message = relationship("MessageModel",back_populates="chatrooms")
+    messages = relationship("MessageModel",back_populates="room_obj")
 
     def __init__(self,name):
         self.name = name
