@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from backend.schemas import User
 from backend.service import Register,Deleteuser,UpdateUser
-from fastapi import HTTPException,Depends
+from fastapi import HTTPException,Depends,status
 from sqlalchemy.orm import Session
 from backend.database import get_db
 from .auth import get_curr_user
@@ -16,7 +16,13 @@ async def get_users(user:dict = Depends(get_curr_user)):
 
 @UserRouter.post("/register")
 async def RegisterUser(user:User,db: Session = Depends(get_db)):
-    Register(user,db)
+    newUser = Register(user,db)
+    try:
+        if newUser == False:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="User already exists")
+        return {"user":newUser.user,"password":newUser.password}
+    except Exception:
+        raise HTTPException(status_code=500,detail="Could not create user")
 
 @UserRouter.delete("/delete/{id}")
 async def DeleteUser(id:int,db: Session = Depends(get_db)):

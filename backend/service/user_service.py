@@ -3,16 +3,23 @@ from sqlalchemy import update
 from models import UserModel
 from backend.schemas import User
 from passlib.context import CryptContext
+
 bcrypt_context = CryptContext(schemes=['bcrypt'],deprecated='auto')
 
 def Register(user:User,db:Session):
-    
+    exist = UserAlreadyExists(user,db)
+    if exist:
+        return False
     user_db = UserModel(user=user.user,password=bcrypt_context.hash(user.password))
-    #add verification if user already exists on db
-    
     db.add(user_db)
     db.commit()
-    db.close()
+    return user_db
+
+def UserAlreadyExists(user:User,db:Session):
+    exist = db.query(UserModel).filter(UserModel.user == user.user).first()
+    if exist:
+        return True
+    return False
 
 def Deleteuser(id:int,db:Session):
     user = db.query(UserModel).filter(UserModel.id == id).first()
