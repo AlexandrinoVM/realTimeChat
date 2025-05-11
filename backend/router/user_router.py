@@ -4,8 +4,15 @@ from backend.service import Register,Deleteuser,UpdateUser
 from fastapi import HTTPException,Depends
 from sqlalchemy.orm import Session
 from backend.database import get_db
+from .auth import get_curr_user
 
 UserRouter = APIRouter()
+
+@UserRouter.get('/')
+async def get_users(user:dict = Depends(get_curr_user)):
+    if user is None:
+        raise HTTPException(status_code=401,detail="Could not Authenticate")
+    return {"user":user}
 
 @UserRouter.post("/register")
 async def RegisterUser(user:User,db: Session = Depends(get_db)):

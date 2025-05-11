@@ -8,7 +8,7 @@ from backend.database import Base,db
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
-from backend.router import UserRouter,RoomRouter
+from backend.router import UserRouter,RoomRouter,MessageRouter,AuthRouter
 
 
 app = FastAPI()
@@ -16,8 +16,8 @@ app = FastAPI()
 async def startup_event():
     Base.metadata.create_all(bind=db)
 
-
-
 app.include_router(UserRouter)
 app.include_router(RoomRouter)
+app.include_router(MessageRouter)
+app.include_router(AuthRouter)
     
