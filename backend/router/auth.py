@@ -35,7 +35,7 @@ async def login_for_acess_token(form_data:Annotated[OAuth2PasswordRequestForm,De
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Could not validate user')
     token = create_acess_token(user.user,user.id,timedelta(minutes=20))
 
-    return {'acc ess_token':token,'token_type':'bearer'}
+    return {'access_token':token,'token_type':'bearer'}
 
 def authenticate_user(username:str,password:str,db):
     user = db.query(UserModel).filter(UserModel.user == username).first()
@@ -53,7 +53,6 @@ def create_acess_token(username:str,user_id:int,expires_date:timedelta):
 
 async def get_curr_user(token:Annotated[str,Depends(oauth2_barear)]):
     try:
-        
         payload = jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
         username:str = payload.get('sub')
         user_id:str = payload.get('id')

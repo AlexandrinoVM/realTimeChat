@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 from backend.schemas import ChatGroup
 from backend.service import CreateRoom,DeleteRoom,UpdateRoom
-from fastapi import HTTPException,Depends
+from fastapi import HTTPException,Depends,status
 from sqlalchemy.orm import Session
 from backend.database import get_db
-
+from .auth import get_curr_user
 RoomRouter = APIRouter()
 
 @RoomRouter.post("/create")
-async def createRoom(chatGroup:ChatGroup,db:Session = Depends(get_db)):
+async def createRoom(chatGroup:ChatGroup,userlog:dict =Depends(get_curr_user),db:Session = Depends(get_db)):
     result = CreateRoom(chatGroup,db)
     if not result:
         raise HTTPException(status_code=400,detail="Chat Room already existis")
