@@ -8,13 +8,13 @@ from .auth import get_curr_user
 
 UserRouter = APIRouter()
 
-@UserRouter.get('/')
+@UserRouter.get('/user')
 async def get_users(user:dict = Depends(get_curr_user)):
     if user is None:
         raise HTTPException(status_code=401,detail="Could not Authenticate")
     return {"user":user}
 
-@UserRouter.post("/register")
+@UserRouter.post("/user/register")
 async def RegisterUser(user:User,db: Session = Depends(get_db)):
     newUser = Register(user,db)
     try:
@@ -24,7 +24,7 @@ async def RegisterUser(user:User,db: Session = Depends(get_db)):
     except Exception:
         raise HTTPException(status_code=500,detail="Could not create user")
 
-@UserRouter.delete("/delete/{id}")
+@UserRouter.delete("/user/delete/{id}")
 async def DeleteUser(id:int,db: Session = Depends(get_db)):
     sucess = Deleteuser(id,db)
     try:
@@ -34,7 +34,7 @@ async def DeleteUser(id:int,db: Session = Depends(get_db)):
     except Exception as e:
          raise HTTPException(status_code=500,detail="Could not delete user")
 
-@UserRouter.put("/update/{id}")
+@UserRouter.put("/user/update/{id}")
 async def updateUser(id:int,user:User,db: Session = Depends(get_db)):
     sucess = UpdateUser(id,user,db)
     print(sucess)
