@@ -1,4 +1,4 @@
-from fastapi import APIRouter,WebSocket
+from fastapi import APIRouter
 from backend.schemas import ChatGroup
 from backend.service import CreateRoom,DeleteRoom,UpdateRoom
 from fastapi import HTTPException,Depends,status

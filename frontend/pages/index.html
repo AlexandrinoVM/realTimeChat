@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login e Registro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 50px;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      width: 300px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .switch {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .switch a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+
+    .switch a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="login-container">
+    <h2>Login</h2>
+    <form id="login-form">
+      <input type="text" name="username" id="user_login" placeholder="Usuário" required />
+      <input type="password" name="password" id="password_login" placeholder="Senha" required />
+      <button type="submit">Entrar</button>
+    </form>
+    <div class="switch">
+      Não tem uma conta? <a href="#" onclick="toggleForms()">Registre-se</a>
+    </div>
+  </div>
+
+  <div class="container" id="register-form" style="display: none;">
+    <h2>Registro</h2>
+    <form id="register-form-inner">
+      <input type="text" name="name" id="name" placeholder="Nome" required />
+      <input type="password" name="password" id="password" placeholder="Senha" required />
+      <button type="submit">Registrar</button>
+    </form>
+    <div class="switch">
+      Já tem uma conta? <a href="#" onclick="toggleForms()">Faça login</a>
+    </div>
+  </div>
+
+  <script>
+   function toggleForms() {
+      const login = document.getElementById('login-container');
+      const register = document.getElementById('register-form');
+
+      if (login.style.display === 'none') {
+        login.style.display = 'block';
+        register.style.display = 'none';
+      } else {
+        login.style.display = 'none';
+        register.style.display = 'block';
+      }
+    }
+
+    document.getElementById('register-form').addEventListener('submit',async (e)=>{
+        e.preventDefault()
+        const user = document.getElementById('name').value
+        const password = document.getElementById('password').value
+        
+        const response = await fetch('http://127.0.0.1:8000/user/register',{
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({user,password})
+        })
+
+        const data = await response.json();
+        if (response.ok) {
+            alert('Registro feito com sucesso!');
+            toggleForms();
+        } else {
+            alert(`Erro: ${data.detail}`);
+        }
+
+      
+    })
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('user_login').value;
+      const password = document.getElementById('password_login').value;
+
+
+      const response = await fetch('http://127.0.0.1:8000/auth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ username, password })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('access_token', data.access_token);
+        window.location.href = 'home.html';
+      } else {
+        alert(`Erro: ${data.detail}`);
+      }
+    })
+  </script>
+
+</body>
+</html>
