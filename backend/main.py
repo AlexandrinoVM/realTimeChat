@@ -24,50 +24,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            const room_id = 1
-            var ws = new WebSocket(`ws://localhost:8000/ws/${room_id}`);
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
 
 manager = ConnectionManager()
 
 @app.on_event("startup")
 async def startup_event():
     Base.metadata.create_all(bind=db)
-
-@app.get('/')
-async def pageTest():
-    return HTMLResponse(html)
 
 app.include_router(UserRouter)
 app.include_router(RoomRouter)
@@ -82,5 +44,5 @@ async def websocket_endpoint(websocket:WebSocket,room_id:int,):
             data = await websocket.receive_text()
             await manager.broadcast(room_id,f"room {room_id}:{data}")
     except WebSocketDisconnect:
-        manager.disconnect(room_id,websocket)
         await manager.broadcast(room_id,"um usuario saiu da sala")
+        await manager.disconnect(room_id,websocket)

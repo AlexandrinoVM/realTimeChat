@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from backend.schemas import ChatGroup
-from backend.service import CreateRoom,DeleteRoom,UpdateRoom
+from backend.service import CreateRoom,DeleteRoom,UpdateRoom,GetRooms
 from fastapi import HTTPException,Depends,status
 from sqlalchemy.orm import Session
 from backend.database import get_db
@@ -28,4 +28,7 @@ async def udpateRoom(id:int,data:ChatGroup,db:Session = Depends(get_db)):
         raise HTTPException(status_code=400,detail="Chat Room Does not Exists or wrong id")
     return {"message":"Room updated with sucess"}
 
-
+@RoomRouter.get('/room/get')
+async def get_rooms(db:Session = Depends(get_db)):
+    rooms =await GetRooms(db)
+    return rooms

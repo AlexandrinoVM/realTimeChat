@@ -36,3 +36,7 @@ def UpdateRoom(id:int,data:ChatGroup,db:Session):
         db.execute(stmt)
         db.commit()
         return True
+
+async def GetRooms(db:Session):
+    rooms =db.query(ChatRoomModel).all() 
+    return rooms

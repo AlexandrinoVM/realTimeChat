@@ -17,5 +17,8 @@ class ConnectionManager:
             del self.active_connection[room_id]
 
     async def broadcast(self,room_id:str,message:str):
-        for connetion in self.active_connection.get(room_id,[]):
-            await connetion.send_text(message)
+         for connection in self.active_connection.get(room_id, []):
+            try:
+                await connection.send_text(message)
+            except RuntimeError:
+                pass
