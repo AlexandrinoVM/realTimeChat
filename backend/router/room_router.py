@@ -7,7 +7,7 @@ from backend.database import get_db
 from .auth import get_curr_user
 RoomRouter = APIRouter()
 
-@RoomRouter.post("/create")
+@RoomRouter.post("/room/create")
 async def createRoom(chatGroup:ChatGroup,userlog:dict =Depends(get_curr_user),db:Session = Depends(get_db)):
     result = CreateRoom(chatGroup,db)
     if not result:

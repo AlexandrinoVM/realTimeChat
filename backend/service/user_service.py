@@ -39,3 +39,8 @@ def UpdateUser(id:int,user:User,db:Session):
     db.commit()
 
     return result.rowcount >0
+
+def GetUserById(id:int,db:Session):
+    user:User
+    user = db.query(UserModel).filter(UserModel.id == id).first()
+    return user

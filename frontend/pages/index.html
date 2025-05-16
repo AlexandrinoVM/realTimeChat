@@ -5,67 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login e Registro</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding-top: 50px;
-      min-height: 100vh;
-    }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #36393f;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+    min-height: 100vh;
+  }
 
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      width: 300px;
-    }
+  .container {
+    background: #2f3136;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 400px;
+  }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ffffff;
+  }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #40444b;
+    color: white;
+    font-size: 1rem;
+    transition: 0.3s;
+  }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #4CAF50;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    outline: none;
+    background-color: #4f545c;
+  }
 
-    button:hover {
-      background-color: #45a049;
-    }
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #7289da;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+  }
 
-    .switch {
-      text-align: center;
-      margin-top: 10px;
-    }
+  button:hover {
+    background-color: #5b6eae;
+  }
 
-    .switch a {
-      color: #4CAF50;
-      text-decoration: none;
-    }
+  .switch {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #ccc;
+  }
 
-    .switch a:hover {
-      text-decoration: underline;
-    }
+  .switch a {
+    color: #7289da;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .switch a:hover {
+    text-decoration: underline;
+  }
   </style>
 </head>
 <body>

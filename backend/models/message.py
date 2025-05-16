@@ -12,5 +12,5 @@ class MessageModel(Base):
     room_obj = relationship("ChatRoomModel", back_populates="messages")
     user_obj = relationship("UserModel", back_populates="messages")
 
-    def __init__(self,content):
-        self.content = content
+    #def __init__(self,content):
+      #  self.content = content

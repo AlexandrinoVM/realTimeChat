@@ -1,34 +1,206 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            const params = new URLSearchParams(window.location.search)
-            const id = params.get("id")
 
-            var ws = new WebSocket(`ws://localhost:8000/ws/${id}`);
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
+<head>
+  <title>Chat</title>
+</head>
+<style>
+ body {
+  margin: 0;
+  padding: 0;
+  background-color: #36393f;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+#chat-wrapper {
+  width: 90vw;
+  max-width: 800px; 
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #2f3136;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+#chat-container {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+
+#messages {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+#messages li {
+  background-color: #40444b;
+  color: #fff;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+
+#messages li.user {
+  background-color: #7289da;
+  margin-left: auto;
+  text-align: right;
+}
+
+#messages li.other {
+  background-color: #40444b;
+  margin-right: auto;
+  text-align: left;
+}
+
+#input-area {
+  display: flex;
+  padding: 0.75rem;
+  background-color: #202225;
+  border-top: 1px solid #2f3136;
+}
+
+
+#messageText {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  background-color: #40444b;
+  color: white;
+  outline: none;
+}
+
+#sendBtn {
+  margin-left: 10px;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  background-color: #7289da;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#sendBtn:hover {
+  background-color: #5b6eae;
+}
+</style>
+<body>
+
+  <div id="chat-wrapper">
+    <div id="chat-container">
+      <ul id="messages"></ul>
+    </div>
+    <div id="input-area">
+      <input type="text" id="messageText" autocomplete="off" placeholder="Digite sua mensagem..." />
+      <button id="sendBtn" type="button">Enviar</button>
+    </div>
+  </div>
+  <script>
+
+
+
+
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error('Token inválido:', e);
+        return null;
+      }
+    }
+
+    const token = localStorage.getItem("access_token");
+    const payload = parseJwt(token);
+    const params = new URLSearchParams(window.location.search);
+    const room_id = params.get("id");
+
+    async function fetchRooms(token) {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/messages/get/${parseInt(room_id)}`);
+        const messages = await res.json();
+        const list = document.getElementById('messages');
+        for (const message of messages) {
+          const userRes = await fetch(`http://127.0.0.1:8000/user/${message.user}`);
+          const user = await userRes.json()
+          const li = document.createElement('li');
+          li.textContent = `${user.user}: ${message.content}`;
+          list.appendChild(li);
+        }
+
+        /*messages.forEach(message => {
+          const li = document.createElement('li');
+          li.textContent = message.content;
+          list.appendChild(li);
+        });*/
+      } catch (err) {
+        console.error('Erro ao buscar mensagens:', err);
+        alert('Erro ao carregar mensagens.');
+      }
+    }
+
+
+    const ws = new WebSocket(`ws://localhost:8000/ws/${room_id}`);
+
+    ws.onmessage = function (event) {
+      const messages = document.getElementById('messages');
+      const message = document.createElement('li');
+      try {
+        const data = JSON.parse(event.data);
+        message.textContent = data.content;
+      } catch (e) {
+        console.warn("Mensagem recebida não é JSON:", event.data);
+        message.textContent = event.data; // fallback
+      }
+      messages.appendChild(message);
+
+    };
+
+
+    document.getElementById("sendBtn").addEventListener("click", function () {
+      const input = document.getElementById("messageText");
+      const content = input.value.trim();
+      if (!content) return;
+
+      const messageObject = {
+        room_id: parseInt(room_id),
+        user_id: payload.id,
+        content: content
+      };
+
+      try {
+        ws.send(JSON.stringify(messageObject));
+      } catch (err) {
+        console.error("Erro ao enviar mensagem via WebSocket:", err);
+      }
+      input.value = "";
+    });
+    document.addEventListener('DOMContentLoaded', function () { fetchRooms(token) });
+  </script>
+</body>
+
 </html>

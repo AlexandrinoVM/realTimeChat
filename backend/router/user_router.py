@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from backend.schemas import User
-from backend.service import Register,Deleteuser,UpdateUser
+from backend.service import Register,Deleteuser,UpdateUser,GetUserById
 from fastapi import HTTPException,Depends,status
 from sqlalchemy.orm import Session
 from backend.database import get_db
@@ -44,3 +44,8 @@ async def updateUser(id:int,user:User,db: Session = Depends(get_db)):
         return {"message":"user updated with sucess"}
     except Exception as e:
         raise HTTPException(status_code=500,detail="Could not update user")
+
+@UserRouter.get('/user/{id}')
+async def get_users(id:int,db = Depends(get_db)):
+    user = GetUserById(id,db)
+    return user 

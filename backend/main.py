@@ -3,15 +3,19 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.dirname(current_dir)
 sys.path.append(project_dir)
-
+import json
 from backend.database import Base,db
 from typing import Union
-from fastapi import FastAPI,WebSocket,WebSocketDisconnect
+from sqlalchemy.orm import Session
+from fastapi import FastAPI,WebSocket,WebSocketDisconnect,Depends
+from backend.database import get_db,SessionLocal
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from backend.router import UserRouter,RoomRouter,MessageRouter,AuthRouter
 from fastapi.middleware.cors import CORSMiddleware
 from backend.utils import ConnectionManager
+from backend.service import CreateMessage,GetUserById
+from backend.schemas import Message
 
 app = FastAPI()
 
@@ -36,13 +40,19 @@ app.include_router(RoomRouter)
 app.include_router(MessageRouter)
 app.include_router(AuthRouter)
 
+
+
 @app.websocket("/ws/{room_id}")
-async def websocket_endpoint(websocket:WebSocket,room_id:int,):
+async def websocket_endpoint(websocket:WebSocket,room_id:int):
     await manager.connetion(room_id,websocket)
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.broadcast(room_id,f"room {room_id}:{data}")
+            message_dict = json.loads(data)
+            db:Session = SessionLocal()
+            message_data = Message(**message_dict)
+            saved_message = CreateMessage(message_data,db)
+            user = GetUserById(saved_message.user,db)
+            await manager.broadcast(room_id,f"{user.user}:{saved_message.content}")
     except WebSocketDisconnect:
-        await manager.broadcast(room_id,"um usuario saiu da sala")
         await manager.disconnect(room_id,websocket)
