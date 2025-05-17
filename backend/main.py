@@ -56,3 +56,7 @@ async def websocket_endpoint(websocket:WebSocket,room_id:int):
             await manager.broadcast(room_id,f"{user.user}:{saved_message.content}")
     except WebSocketDisconnect:
         await manager.disconnect(room_id,websocket)
+
+@app.get("/chat/connection/{room_id}")
+async def get_connections(room_id:int):
+    return manager.count(room_id)

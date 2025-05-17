@@ -34,6 +34,7 @@ function parseJwt(token) {
     localStorage.removeItem('access_token');
     window.location.href = 'index.html';
   }
+  var globalRoom
 
   async function fetchRooms(token) {
     try {
@@ -48,7 +49,9 @@ function parseJwt(token) {
         const li = document.createElement('li');
         li.textContent = room.name;
         li.onclick = () => {
-          window.location.href = `chat.html?id=${room.id}`
+          userModal()
+          globalRoom = room.id
+          //window.location.href = `chat.html?id=${room.id}`
         };
         list.appendChild(li);
       });
@@ -64,6 +67,28 @@ function parseJwt(token) {
 
   function closeModal() {
     document.getElementById('modal').style.display = 'none';
+  }
+
+  function closeModal_select(){
+    document.getElementById('modal_select').style.display = 'none';
+  }
+
+  function gotoRoom(){
+    window.location.href = `chat.html?id=${globalRoom}`
+  }
+
+  async function deleteRoom(){
+      const res = await fetch(`http://127.0.0.1:8000/room/delete/${globalRoom}`,{
+        method: 'DELETE'
+      })
+      const resp = await res.json()
+      console.log(resp)
+      document.getElementById('room-list').innerHTML = "";
+      fetchRooms(token)
+  }
+
+  function userModal() {
+    document.getElementById('modal_select').style.display = 'flex';
   }
 
   async function createRoom(){

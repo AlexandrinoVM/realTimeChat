@@ -22,3 +22,6 @@ class ConnectionManager:
                 await connection.send_text(message)
             except RuntimeError:
                 pass
+    
+    def count(self,room_id:int):
+        return len(self.active_connection[room_id])

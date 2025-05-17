@@ -16,6 +16,22 @@
     height: 100vh;
   }
 
+  #user-counter-wrapper {
+    background-color: #202225;
+    padding: 0.5rem 1rem;
+    color: #b9bbbe;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #2f3136;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  #user-counter {
+    font-weight: bold;
+    color: #43b581;
+    margin-left: auto;
+  }
 
   #chat-wrapper {
     width: 90vw;
@@ -35,13 +51,11 @@
     overflow-y: auto;
   }
 
-
   #messages {
     list-style-type: none;
     padding: 0;
     margin: 0;
   }
-
 
   #messages li {
     background-color: #40444b;
@@ -119,10 +133,54 @@
   #sendBtn:hover {
     background-color: #5b6eae;
   }
+
+  #info-bar {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw;
+    max-width: 800px;
+    background-color: #2f3136;
+    padding: 10px 20px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: #b9bbbe;
+    font-size: 0.95rem;
+    font-weight: 500;
+    z-index: 1000;
+  }
+
+  #chat-wrapper {
+    margin-top: 60px;
+  }
+
+  .logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .logout-btn:hover {
+    background-color: #c0392b;
+  }
 </style>
 
 <body>
 
+  <div id="info-bar">
+    <button class="logout-btn" onclick="logout()">Sair</button>
+    <p id="user-counter"></p>
+  </div>
   <div id="chat-wrapper">
     <div id="chat-container">
       <ul id="messages"></ul>
@@ -134,6 +192,9 @@
   </div>
   <script>
 
+    function logout() {
+      window.location.href = 'home.html';
+    }
 
 
 
@@ -172,7 +233,7 @@
           const user = await userRes.json()
           const li = document.createElement('li');
           li.classList.add('message')
-          console.log(message.id ,"",userid)
+          console.log(message.id, "", userid)
           if (message.user === userid) {
             li.classList.add('my-message');
           } else {
@@ -229,7 +290,20 @@
       }
       input.value = "";
     });
+    async function users_connected() {
+      const p = document.getElementById('user-counter')
+      const num = await fetch(`http://127.0.0.1:8000/chat/connection/${room_id}`)
+      const resnum = await num.json()
+      p.innerHTML = "usuarios online:"+resnum
+    }
     document.addEventListener('DOMContentLoaded', function () { fetchRooms(token) });
+    document.addEventListener('DOMContentLoaded', function () {
+      users_connected();
+      setInterval(users_connected, 5000);
+    });
+
+
+
   </script>
 </body>
 
