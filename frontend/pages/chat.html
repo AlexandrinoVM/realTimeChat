@@ -5,102 +5,122 @@
   <title>Chat</title>
 </head>
 <style>
- body {
-  margin: 0;
-  padding: 0;
-  background-color: #36393f;
-  font-family: 'Segoe UI', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #36393f;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 
 
-#chat-wrapper {
-  width: 90vw;
-  max-width: 800px; 
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #2f3136;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
+  #chat-wrapper {
+    width: 90vw;
+    max-width: 800px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #2f3136;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
 
-#chat-container {
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
-}
-
-
-#messages {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
+  #chat-container {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+  }
 
 
-#messages li {
-  background-color: #40444b;
-  color: #fff;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  max-width: 70%;
-  word-wrap: break-word;
-}
+  #messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
 
 
-#messages li.user {
-  background-color: #7289da;
-  margin-left: auto;
-  text-align: right;
-}
-
-#messages li.other {
-  background-color: #40444b;
-  margin-right: auto;
-  text-align: left;
-}
-
-#input-area {
-  display: flex;
-  padding: 0.75rem;
-  background-color: #202225;
-  border-top: 1px solid #2f3136;
-}
+  #messages li {
+    background-color: #40444b;
+    color: #fff;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+  }
 
 
-#messageText {
-  flex: 1;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 20px;
-  font-size: 1rem;
-  background-color: #40444b;
-  color: white;
-  outline: none;
-}
+  #messages li.user {
+    background-color: #7289da;
+    margin-left: auto;
+    text-align: right;
+  }
 
-#sendBtn {
-  margin-left: 10px;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 20px;
-  background-color: #7289da;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
+  #messages li.other {
+    list-style-type: none;
+    padding: 0;
+  }
 
-#sendBtn:hover {
-  background-color: #5b6eae;
-}
+  #input-area {
+    display: flex;
+    padding: 0.75rem;
+    background-color: #202225;
+    border-top: 1px solid #2f3136;
+  }
+
+  .message {
+    padding: 8px 12px;
+    margin: 5px;
+    max-width: 60%;
+    border-radius: 10px;
+    clear: both;
+  }
+
+  .my-message {
+    background-color: #dcf8c6;
+    float: right;
+    text-align: right;
+  }
+
+  .other-message {
+    background-color: #f1f0f0;
+    float: left;
+    text-align: left;
+  }
+
+
+  #messageText {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    background-color: #40444b;
+    color: white;
+    outline: none;
+  }
+
+  #sendBtn {
+    margin-left: 10px;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    background-color: #7289da;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  #sendBtn:hover {
+    background-color: #5b6eae;
+  }
 </style>
+
 <body>
 
   <div id="chat-wrapper">
@@ -141,6 +161,9 @@
 
     async function fetchRooms(token) {
       try {
+        const userInfo = parseJwt(token)
+        const userid = userInfo.id
+        console.log(userid)
         const res = await fetch(`http://127.0.0.1:8000/messages/get/${parseInt(room_id)}`);
         const messages = await res.json();
         const list = document.getElementById('messages');
@@ -148,6 +171,13 @@
           const userRes = await fetch(`http://127.0.0.1:8000/user/${message.user}`);
           const user = await userRes.json()
           const li = document.createElement('li');
+          li.classList.add('message')
+          console.log(message.id ,"",userid)
+          if (message.user === userid) {
+            li.classList.add('my-message');
+          } else {
+            li.classList.add('other-message');
+          }
           li.textContent = `${user.user}: ${message.content}`;
           list.appendChild(li);
         }

@@ -32,7 +32,7 @@ function parseJwt(token) {
 
   function logout() {
     localStorage.removeItem('access_token');
-    window.location.href = 'login.html';
+    window.location.href = 'index.html';
   }
 
   async function fetchRooms(token) {
