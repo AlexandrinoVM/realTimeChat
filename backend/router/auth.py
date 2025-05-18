@@ -21,7 +21,7 @@ AuthRouter = APIRouter(
 )
 
 SECRET_KEY=os.getenv('SECRET_KEY')
-ALGORITHM = 'HS256'
+ALGORITHM = os.getenv('ALGORITHM')
 
 bcrypt_context = CryptContext(schemes=['bcrypt'],deprecated='auto')
 oauth2_barear = OAuth2PasswordBearer(tokenUrl='auth/token')

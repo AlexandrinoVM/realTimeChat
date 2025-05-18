@@ -75,6 +75,7 @@ function parseJwt(token) {
 
   function gotoRoom(){
     window.location.href = `chat.html?id=${globalRoom}`
+    closeModal_select()
   }
 
   async function deleteRoom(){
@@ -85,6 +86,7 @@ function parseJwt(token) {
       console.log(resp)
       document.getElementById('room-list').innerHTML = "";
       fetchRooms(token)
+      closeModal_select()
   }
 
   function userModal() {

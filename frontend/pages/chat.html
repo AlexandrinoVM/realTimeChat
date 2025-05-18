@@ -196,8 +196,6 @@
       window.location.href = 'home.html';
     }
 
-
-
     function parseJwt(token) {
       try {
         const base64Url = token.split('.')[1];
@@ -253,13 +251,20 @@
         alert('Erro ao carregar mensagens.');
       }
     }
-
+    var clicked = 0;
 
     const ws = new WebSocket(`ws://localhost:8000/ws/${room_id}`);
 
     ws.onmessage = function (event) {
       const messages = document.getElementById('messages');
       const message = document.createElement('li');
+      message.classList.add('message')
+      if(clicked == 1){
+        message.classList.add('my-message');
+      }else{
+        message.classList.add('other-message');
+
+      }
       try {
         const data = JSON.parse(event.data);
         message.textContent = data.content;
@@ -268,11 +273,12 @@
         message.textContent = event.data; // fallback
       }
       messages.appendChild(message);
-
+      clicked = 0
     };
 
 
     document.getElementById("sendBtn").addEventListener("click", function () {
+      clicked = 1
       const input = document.getElementById("messageText");
       const content = input.value.trim();
       if (!content) return;
